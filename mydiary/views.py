@@ -8,16 +8,16 @@ def home(request):
     return render(request, 'home.html', {'posts_list':posts})
 
 def new(request):
-    form = ContentForm(request.POST,request.FILES)
     if request.method == 'POST':
+        form = ContentForm(request.POST,request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
             post.save()
             return redirect('home')
-        else:
-            form = ContentForm()
+    else:
+        form = ContentForm()
     return render(request, 'new.html',{'form':form})
 
 def detail(request, index):
@@ -26,8 +26,8 @@ def detail(request, index):
 
 def edit(request, index):
     post = get_object_or_404(Content, pk = index)
-    form = ContentForm(request.POST, instance=post)
     if request.method=='POST':
+        form = ContentForm(request.POST, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
@@ -36,7 +36,7 @@ def edit(request, index):
             return redirect('detail', index=post.pk)
     else:
         form = ContentForm(instance=post)
-        return render(request, 'edit.html',{'form':form})
+    return render(request, 'edit.html',{'form':form})
 
 def delete(request,index):
     post = get_object_or_404(Content, pk=index)
